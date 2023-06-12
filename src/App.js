@@ -1,9 +1,17 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
+import Login from "./components/Login";
+import ErrorPage from "./components/ErrorPage";
 
 function App() {
   return (
     <div className="App">
-      <h1>Let's build our app!</h1>
+      <Router>
+        <Routes>
+          <Route exact path="/" element={<Login />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
