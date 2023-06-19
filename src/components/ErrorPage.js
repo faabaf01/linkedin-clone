@@ -14,7 +14,7 @@ const Error = styled.div`
   h1 {
     padding-bottom: 0;
     width: 55%;
-    font-size: 56px;
+    font-size: 4cqw;
     color: #2977c9;
     font-weight: 200;
     line-height: 70px;
