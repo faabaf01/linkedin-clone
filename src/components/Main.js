@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import PostModal from "./PostModal";
 
 const Main = () => {
   return (
@@ -87,6 +88,7 @@ const Main = () => {
           </SocialActions>
         </Article>
       </div>
+      <PostModal />
     </Container>
   );
 };
@@ -289,3 +291,4 @@ const SocialActions = styled.div`
 `;
 
 export default Main;
+//4:46:24
