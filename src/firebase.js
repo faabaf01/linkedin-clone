@@ -22,6 +22,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+const storage = getStorage(app);
+
 const provider = new GoogleAuthProvider();
 // // Sign in using a popup.
 // // const provider = new GoogleAuthProvider();
@@ -36,8 +38,7 @@ const provider = new GoogleAuthProvider();
 // const token = credential.accessToken;
 
 // Get a reference to the storage service, which is used to create references in your storage bucket
-const storage = getStorage();
 
 export { auth, provider, storage };
 export default db;
-//4:00
+

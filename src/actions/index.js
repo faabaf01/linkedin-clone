@@ -1,6 +1,9 @@
-import { auth, provider } from "../firebase";
+import { auth, provider, storage } from "../firebase";
+import db from "../firebase";
 import { signInWithPopup } from "firebase/auth";
 import { SET_USER } from "./actionType";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
 
 export const setUser = (payload) => ({
   type: SET_USER,
@@ -47,5 +50,73 @@ export function signOutAPI() {
       .catch((error) => {
         console.log(error.message);
       });
+  };
+}
+
+export function postArticleAPI(payload) {
+  return (dispatch) => {
+    if (payload.image !== "") {
+      const storageRef = ref(storage, `images/${payload.image.name}`);
+      const uploadImg = uploadBytesResumable(storageRef, payload.image);
+      uploadImg.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          console.log(`Progress: ${progress}%`);
+          if (snapshot.state === "RUNNING") {
+            console.log(`Progress: ${progress}%`);
+          }
+        },
+        (error) => console.log(error.message),
+        async () => {
+          //const downloadURL = await getDownloadURL(storageRef).then((url) => {
+          //console.log("Download URL", url);
+          //});
+          await getDownloadURL(storageRef).then((url) => {
+            const articleImgRef = collection(db, "Articles");
+            addDoc(articleImgRef, {
+              actor: {
+                description: payload.user.email,
+                title: payload.user.displayName,
+                date: payload.timestamp,
+                image: payload.user.photoURL,
+              },
+              video: payload.video,
+              sharedImg: url,
+              comments: 0,
+              description: payload.description,
+            });
+          });
+          // db.collection("articles").add({
+          //   actor: {
+          //     description: payload.user.email,
+          //     title: payload.user.displayName,
+          //     date: payload.timestamp,
+          //     image: payload.user.photoURL,
+          //   },
+          //   video: payload.video,
+          //   sharedImg: downloadURL,
+          //   comments: 0,
+          //   description: payload.description,
+          // });
+        }
+      );
+    } else if (payload.video) {
+      const articleVidRef = collection(db, "Articles");
+      addDoc(articleVidRef, {
+        actor: {
+          description: payload.user.email,
+          title: payload.user.displayName,
+          date: payload.timestamp,
+          image: payload.user.photoURL,
+        },
+        video: payload.video,
+        sharedImg: "",
+        comments: 0,
+        description: payload.description,
+      });
+    }
   };
 }
