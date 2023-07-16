@@ -29,10 +29,9 @@ const PostModal = (props) => {
   };
 
   const postArticle = (e) => {
-    console.log("post malone");
+    console.log("posted");
     e.preventDefault();
     if (e.target !== e.currentTarget) {
-      console.log("cake");
       return;
     }
 
@@ -313,4 +312,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostModal);
-//5:43:14
+//6:20:00
