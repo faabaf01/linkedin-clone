@@ -1,7 +1,7 @@
 import { auth, provider, storage } from "../firebase";
 import db from "../firebase";
 import { signInWithPopup } from "firebase/auth";
-import { SET_USER, SET_LOADING_STATUS } from "./actionType";
+import { SET_USER, SET_LOADING_STATUS, GET_ARTICLES } from "./actionType";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import {
   addDoc,
@@ -19,6 +19,11 @@ export const setUser = (payload) => ({
 export const setLoading = (status) => ({
   type: SET_LOADING_STATUS,
   status: status,
+});
+
+export const getArticles = (payload) => ({
+  type: GET_ARTICLES,
+  payload: payload,
 });
 
 export function signInAPI() {
@@ -75,7 +80,7 @@ export function postArticleAPI(payload) {
         "state_changed",
         (snapshot) => {
           const progress =
-            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
           console.log(`Progress: ${progress}%`);
           if (snapshot.state === "RUNNING") {
@@ -135,22 +140,14 @@ export function postArticleAPI(payload) {
     }
   };
 }
-
 export function getArticlesAPI() {
   return (dispatch) => {
-    // let payload;
     const articleRef = collection(db, "Articles");
     const q = query(articleRef, orderBy("actor.date", "desc"));
     onSnapshot(q, (snapshot) => {
       const payload = snapshot.docs.map((doc) => doc.data());
-      console.log(payload);
+      // console.log(payload);
+      dispatch(getArticles(payload));
     });
-
-    // db.collection("Articles")
-    //   .orderBy("actor.date", "desc")
-    //   .onSnapshot((snapshot) => {
-    //     payload = snapshot.docs.map((doc) => doc.data());
-    //     console.log(payload);
-    //   });
   };
 }
