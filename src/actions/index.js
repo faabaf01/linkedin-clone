@@ -3,7 +3,13 @@ import db from "../firebase";
 import { signInWithPopup } from "firebase/auth";
 import { SET_USER, SET_LOADING_STATUS } from "./actionType";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 
 export const setUser = (payload) => ({
   type: SET_USER,
@@ -127,5 +133,24 @@ export function postArticleAPI(payload) {
       });
       dispatch(setLoading(false));
     }
+  };
+}
+
+export function getArticlesAPI() {
+  return (dispatch) => {
+    // let payload;
+    const articleRef = collection(db, "Articles");
+    const q = query(articleRef, orderBy("actor.date", "desc"));
+    onSnapshot(q, (snapshot) => {
+      const payload = snapshot.docs.map((doc) => doc.data());
+      console.log(payload);
+    });
+
+    // db.collection("Articles")
+    //   .orderBy("actor.date", "desc")
+    //   .onSnapshot((snapshot) => {
+    //     payload = snapshot.docs.map((doc) => doc.data());
+    //     console.log(payload);
+    //   });
   };
 }
